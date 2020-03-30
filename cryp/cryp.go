@@ -92,10 +92,10 @@ func Cryp(key, msg string) string {
 //   key   : Key for decoding
 //   c     : Text codified with cryp()
 //   return: 'c' decoded.
-func Decryp(key, c string) string {
+func Decryp(key, c string) (plain string, err error) {
 	mb, err := b64.DecodeString(c)
 	if err != nil {
-		return Cryp(GenK(256), c)
+		return
 	}
 	lg := len(mb)
 	k := Key(key, lg)
@@ -106,7 +106,8 @@ func Decryp(key, c string) string {
 	}
 	mb, err = b64.DecodeString(string(r))
 	if err != nil {
-		return Cryp(GenK(256), c)
+		return
 	}
-	return string(mb)
+	plain = string(mb)
+	return
 }
