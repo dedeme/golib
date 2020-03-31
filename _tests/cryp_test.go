@@ -9,14 +9,7 @@ import (
 	"testing"
 )
 
-func eq(actual, expected string) string {
-	if actual != expected {
-		return fmt.Sprintf("\nActual  : %s\nExpected: %s\n", actual, expected)
-	}
-	return ""
-}
-
-func decryp (key, code string) (plain string) {
+func decryp(key, code string) (plain string) {
 	plain, _ = cryp.Decryp(key, code)
 	return
 }
