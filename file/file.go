@@ -7,13 +7,13 @@ package file
 import (
 	"archive/zip"
 	"bufio"
+	"github.com/dedeme/golib/log"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
-	"github.com/dedeme/golib/log"
 )
 
 // UserDir returns the name of user dir
