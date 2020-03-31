@@ -157,6 +157,7 @@ func TestArray(t *testing.T) {
 	test("[1,\"abc\",2]")
 	test("[1,\"abñc\",2]")
 	test("[1,\"a\\\"b\\\"ñc\",2]")
+	test("[1,[2,[3,4]],[2,3]]")
 
 	_, err := json.Ra(json.FromString("[4"))
 	msg := "Array does not end with ']' in\n[4"
@@ -255,25 +256,45 @@ func TestObject(t *testing.T) {
 	test("{}", map[string]json.T{})
 	test("{\"one\":1}", map[string]json.T{"one": json.Wi(1)})
 	test("{\"one\":1,\"two\":2,\"three\":3}",
-		map[string]json.T{"one": json.Wi(1),
+		map[string]json.T{
+			"one": json.Wi(1),
 			"two":   json.Wi(2),
 			"three": json.Wi(3),
 		},
 	)
+	test("{\"one\":1,\"two\":[2,3],\"three\":3}",
+		map[string]json.T{
+			"one": json.Wi(1),
+			"two":   json.Wa([]json.T{json.Wi(2),json.Wi(3)}),
+			"three": json.Wi(3),
+		},
+	)
+	/*
+	test("{\"one\":1,\"two\":{\"a\":2,\"b\":3},\"three\":3}",
+		map[string]json.T{
+			"one": json.Wi(1),
+			"two":   json.Wo(map[string]json.T{"a":json.Wi(2),"b:":json.Wi(3)}),
+			"three": json.Wi(3),
+		},
+	)
+	*/
 	test("{\"one\":1,\"two\":\"abc\",\"three\":3}",
-		map[string]json.T{"one": json.Wi(1),
+		map[string]json.T{
+			"one": json.Wi(1),
 			"two":   json.Ws("abc"),
 			"three": json.Wi(3),
 		},
 	)
 	test("{\"one\":1,\"two\":\"abñc\",\"three\":3}",
-		map[string]json.T{"one": json.Wi(1),
+		map[string]json.T{
+			"one": json.Wi(1),
 			"two":   json.Ws("abñc"),
 			"three": json.Wi(3),
 		},
 	)
 	test("{\"one\":1,\"two\":\"a\\\"b\\\"ñc\",\"three\":3}",
-		map[string]json.T{"one": json.Wi(1),
+		map[string]json.T{
+			"one": json.Wi(1),
 			"two":   json.Ws("a\"b\"ñc"),
 			"three": json.Wi(3),
 		},

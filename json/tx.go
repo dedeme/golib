@@ -4,7 +4,9 @@
 // Text management.
 package json
 
-func nextByte (s string, ch byte, ix int) (pos int) {
+import "errors"
+
+func nextByte (s string, ch byte, ix int) (pos int, err error) {
 	pos = ix
 	l := len(s)
 	quotes := false
@@ -30,6 +32,56 @@ func nextByte (s string, ch byte, ix int) (pos int) {
 				break
 			} else if c == '"' {
 				quotes = true
+			} else if c == '[' {
+				n := 1
+				var open, close int
+				for n > 0 {
+					pos++
+					open, err = nextByte(s, '[', pos)
+					if err != nil {
+						return
+					}
+					close, err = nextByte(s, ']', pos)
+					if err != nil {
+						return
+					}
+					if open < close {
+						pos = open
+						n++
+					} else {
+						pos = close
+						n--
+					}
+				}
+				if pos == l {
+					err = errors.New("'[' not closed")
+					return
+				}
+			} else if c == '{' {
+				n := 1
+				var open, close int
+				for n > 0 {
+					pos++
+					open, err = nextByte(s, '{', pos)
+					if err != nil {
+						return
+					}
+					close, err = nextByte(s, '}', pos)
+					if err != nil {
+						return
+					}
+					if open < close {
+						pos = open
+						n++
+					} else {
+						pos = close
+						n--
+					}
+				}
+				if pos == l {
+					err = errors.New("'{' not closed")
+					return
+				}
 			}
 		}
 		pos++

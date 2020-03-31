@@ -15,3 +15,10 @@ func eq(actual, expected string) string {
 	}
 	return ""
 }
+
+func eqi(actual, expected int) string {
+	if actual != expected {
+		return fmt.Sprintf("\nActual  : %v\nExpected: %v\n", actual, expected)
+	}
+	return ""
+}

@@ -153,11 +153,15 @@ func Ra (js T) (v []T, err error) {
 	var e string
 	var i2 int
 	for i2 < l {
-		i2 = nextByte(s2, ',', i)
+		i2, err = nextByte(s2, ',', i)
+		if err != nil {
+			err = errors.New(fmt.Sprintf("%v in\n%v"))
+			return
+		}
 		e = strings.TrimSpace(s2[i : i2])
 		if e == "" {
 			err = errors.New(fmt.Sprintf("Empty elements in\n%v", s))
-			break
+			return
 		}
 		v = append(v, T(e))
 		i = i2 + 1
@@ -204,23 +208,31 @@ func Ro (js T) (v map[string]T, err error) {
 	var val string
 	var i2 int
 	for i2 < l {
-		i2 = nextByte(s2, ':', i)
+		i2, err = nextByte(s2, ':', i)
+		if err != nil {
+			err = errors.New(fmt.Sprintf("%v in\n%v"))
+			return
+		}
 		kjs = strings.TrimSpace(s2[i : i2])
 		if kjs == "" {
 			err = errors.New(fmt.Sprintf("Key missing in\n%v", s))
-			break
+			return
 		}
 		k, err = Rs(T(kjs))
 		if err != nil {
-			break
+			return
 		}
 
 		i = i2 + 1
-		i2 = nextByte(s2, ',', i)
+		i2, err = nextByte(s2, ',', i)
+		if err != nil {
+			err = errors.New(fmt.Sprintf("%v in\n%v"))
+			return
+		}
 		val = strings.TrimSpace(s2[i : i2])
 		if val == "" {
 			err = errors.New(fmt.Sprintf("Value missing in\n%v", s))
-			break
+			return
 		}
 
 		v[k] = T(val)
