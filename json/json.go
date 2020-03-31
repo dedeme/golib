@@ -5,41 +5,41 @@
 package json
 
 import (
-	"fmt"
 	gson "encoding/json"
-	"strings"
 	"errors"
+	"fmt"
+	"strings"
 )
 
 type T string
 
 // json.T converter
-func (js T) String () string {
+func (js T) String() string {
 	return string(js)
 }
 
 // Creates a new json.T from string ('s' must be a valid JSON value, although
 // it is not checked).
-func FromString (s string) T {
+func FromString(s string) T {
 	return T(strings.TrimSpace(s))
 }
 
-func Wn () T {
+func Wn() T {
 	return "null"
 }
 
-func IsNull (js T) bool {
+func IsNull(js T) bool {
 	return string(js) == "null"
 }
 
 // bool -> json.T
-func Wb (v bool) T {
+func Wb(v bool) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> bool
-func Rb (js T) (v bool, err error) {
+func Rb(js T) (v bool, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -48,13 +48,13 @@ func Rb (js T) (v bool, err error) {
 }
 
 // int -> json.T
-func Wi (v int) T {
+func Wi(v int) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> int
-func Ri (js T) (v int, err error) {
+func Ri(js T) (v int, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -63,13 +63,13 @@ func Ri (js T) (v int, err error) {
 }
 
 // int64 -> json.T
-func Wl (v int64) T {
+func Wl(v int64) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> int64
-func Rl (js T) (v int64, err error) {
+func Rl(js T) (v int64, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -78,13 +78,13 @@ func Rl (js T) (v int64, err error) {
 }
 
 // float32 -> json.T
-func Wf (v float32) T {
+func Wf(v float32) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> float64
-func Rf (js T) (v float32, err error) {
+func Rf(js T) (v float32, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -93,13 +93,13 @@ func Rf (js T) (v float32, err error) {
 }
 
 // float64 -> json.T
-func Wd (v float64) T {
+func Wd(v float64) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> float64
-func Rd (js T) (v float64, err error) {
+func Rd(js T) (v float64, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -108,13 +108,13 @@ func Rd (js T) (v float64, err error) {
 }
 
 // string -> json.T
-func Ws (v string) T {
+func Ws(v string) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> string
-func Rs (js T) (v string, err error) {
+func Rs(js T) (v string, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
@@ -123,7 +123,7 @@ func Rs (js T) (v string, err error) {
 }
 
 // []json.T -> json.T
-func Wa (v []T) T {
+func Wa(v []T) T {
 	var b strings.Builder
 	b.WriteByte('[')
 	for i, js := range v {
@@ -137,7 +137,7 @@ func Wa (v []T) T {
 }
 
 // json.T -> []json.T
-func Ra (js T) (v []T, err error) {
+func Ra(js T) (v []T, err error) {
 	s := string(js)
 	if !strings.HasPrefix(s, "[") {
 		err = errors.New(fmt.Sprintf("Array does not start with '[' in\n%v", s))
@@ -147,7 +147,7 @@ func Ra (js T) (v []T, err error) {
 		err = errors.New(fmt.Sprintf("Array does not end with ']' in\n%v", s))
 		return
 	}
-	s2 := strings.TrimSpace(s[1:len(s)-1])
+	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
 	i := 0
 	var e string
@@ -158,7 +158,7 @@ func Ra (js T) (v []T, err error) {
 			err = errors.New(fmt.Sprintf("%v in\n%v"))
 			return
 		}
-		e = strings.TrimSpace(s2[i : i2])
+		e = strings.TrimSpace(s2[i:i2])
 		if e == "" {
 			err = errors.New(fmt.Sprintf("Empty elements in\n%v", s))
 			return
@@ -170,7 +170,7 @@ func Ra (js T) (v []T, err error) {
 }
 
 // map[string]json.T -> json.T
-func Wo (v map[string]T) T {
+func Wo(v map[string]T) T {
 	var b strings.Builder
 	b.WriteByte('{')
 	more := false
@@ -189,7 +189,7 @@ func Wo (v map[string]T) T {
 }
 
 // json.T -> map[string]json.T
-func Ro (js T) (v map[string]T, err error) {
+func Ro(js T) (v map[string]T, err error) {
 	v = make(map[string]T)
 	s := string(js)
 	if !strings.HasPrefix(s, "{") {
@@ -200,7 +200,7 @@ func Ro (js T) (v map[string]T, err error) {
 		err = errors.New(fmt.Sprintf("Object does not end with '}' in\n%v", s))
 		return
 	}
-	s2 := strings.TrimSpace(s[1:len(s)-1])
+	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
 	i := 0
 	var kjs string
@@ -213,7 +213,7 @@ func Ro (js T) (v map[string]T, err error) {
 			err = errors.New(fmt.Sprintf("%v in\n%v"))
 			return
 		}
-		kjs = strings.TrimSpace(s2[i : i2])
+		kjs = strings.TrimSpace(s2[i:i2])
 		if kjs == "" {
 			err = errors.New(fmt.Sprintf("Key missing in\n%v", s))
 			return
@@ -229,7 +229,7 @@ func Ro (js T) (v map[string]T, err error) {
 			err = errors.New(fmt.Sprintf("%v in\n%v"))
 			return
 		}
-		val = strings.TrimSpace(s2[i : i2])
+		val = strings.TrimSpace(s2[i:i2])
 		if val == "" {
 			err = errors.New(fmt.Sprintf("Value missing in\n%v", s))
 			return
@@ -240,4 +240,3 @@ func Ro (js T) (v map[string]T, err error) {
 	}
 	return
 }
-

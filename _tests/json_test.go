@@ -257,44 +257,44 @@ func TestObject(t *testing.T) {
 	test("{\"one\":1}", map[string]json.T{"one": json.Wi(1)})
 	test("{\"one\":1,\"two\":2,\"three\":3}",
 		map[string]json.T{
-			"one": json.Wi(1),
+			"one":   json.Wi(1),
 			"two":   json.Wi(2),
 			"three": json.Wi(3),
 		},
 	)
 	test("{\"one\":1,\"two\":[2,3],\"three\":3}",
 		map[string]json.T{
-			"one": json.Wi(1),
-			"two":   json.Wa([]json.T{json.Wi(2),json.Wi(3)}),
+			"one":   json.Wi(1),
+			"two":   json.Wa([]json.T{json.Wi(2), json.Wi(3)}),
 			"three": json.Wi(3),
 		},
 	)
 	/*
-	test("{\"one\":1,\"two\":{\"a\":2,\"b\":3},\"three\":3}",
-		map[string]json.T{
-			"one": json.Wi(1),
-			"two":   json.Wo(map[string]json.T{"a":json.Wi(2),"b:":json.Wi(3)}),
-			"three": json.Wi(3),
-		},
-	)
+		test("{\"one\":1,\"two\":{\"a\":2,\"b\":3},\"three\":3}",
+			map[string]json.T{
+				"one": json.Wi(1),
+				"two":   json.Wo(map[string]json.T{"a":json.Wi(2),"b:":json.Wi(3)}),
+				"three": json.Wi(3),
+			},
+		)
 	*/
 	test("{\"one\":1,\"two\":\"abc\",\"three\":3}",
 		map[string]json.T{
-			"one": json.Wi(1),
+			"one":   json.Wi(1),
 			"two":   json.Ws("abc"),
 			"three": json.Wi(3),
 		},
 	)
 	test("{\"one\":1,\"two\":\"abñc\",\"three\":3}",
 		map[string]json.T{
-			"one": json.Wi(1),
+			"one":   json.Wi(1),
 			"two":   json.Ws("abñc"),
 			"three": json.Wi(3),
 		},
 	)
 	test("{\"one\":1,\"two\":\"a\\\"b\\\"ñc\",\"three\":3}",
 		map[string]json.T{
-			"one": json.Wi(1),
+			"one":   json.Wi(1),
 			"two":   json.Ws("a\"b\"ñc"),
 			"three": json.Wi(3),
 		},
