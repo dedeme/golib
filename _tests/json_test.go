@@ -57,9 +57,28 @@ func TestInt(t *testing.T) {
 	test("-2500")
 }
 
+func TestLong(t *testing.T) {
+	var test = func(value string) {
+		var v int64
+		var err error
+
+		v, err = json.Rl(json.FromString(value))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if r := eq(json.Wl(v).String(), value); r != "" {
+			t.Fatal(r)
+		}
+	}
+
+	test("0")
+	test("123")
+	test("-2500")
+}
+
 func TestFloat(t *testing.T) {
 	var test = func(value string) {
-		var v float64
+		var v float32
 		var err error
 
 		v, err = json.Rf(json.FromString(value))
@@ -67,6 +86,25 @@ func TestFloat(t *testing.T) {
 			t.Fatal(err)
 		}
 		if r := eq(json.Wf(v).String(), value); r != "" {
+			t.Fatal(r)
+		}
+	}
+
+	test("0")
+	test("123.456")
+	test("-2500.02")
+}
+
+func TestDouble(t *testing.T) {
+	var test = func(value string) {
+		var v float64
+		var err error
+
+		v, err = json.Rd(json.FromString(value))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if r := eq(json.Wd(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
 	}

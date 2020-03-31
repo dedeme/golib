@@ -62,14 +62,44 @@ func Ri (js T) (v int, err error) {
 	return
 }
 
-// float64 -> json.T
-func Wf (v float64) T {
+// int64 -> json.T
+func Wl (v int64) T {
+	js, _ := gson.Marshal(v)
+	return T(js)
+}
+
+// json.T -> int64
+func Rl (js T) (v int64, err error) {
+	err = gson.Unmarshal([]byte(js), &v)
+	if err != nil {
+		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+	}
+	return
+}
+
+// float32 -> json.T
+func Wf (v float32) T {
 	js, _ := gson.Marshal(v)
 	return T(js)
 }
 
 // json.T -> float64
-func Rf (js T) (v float64, err error) {
+func Rf (js T) (v float32, err error) {
+	err = gson.Unmarshal([]byte(js), &v)
+	if err != nil {
+		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+	}
+	return
+}
+
+// float64 -> json.T
+func Wd (v float64) T {
+	js, _ := gson.Marshal(v)
+	return T(js)
+}
+
+// json.T -> float64
+func Rd (js T) (v float64, err error) {
 	err = gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
