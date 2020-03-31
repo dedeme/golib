@@ -7,7 +7,7 @@ package cryp
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"log"
+	"github.com/dedeme/golib/log"
 )
 
 var b64 = base64.StdEncoding

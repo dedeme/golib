@@ -9,11 +9,11 @@ import (
 	"bufio"
 	"io"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
+	"github.com/dedeme/golib/log"
 )
 
 // UserDir returns the name of user dir
