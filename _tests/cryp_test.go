@@ -9,11 +9,6 @@ import (
 	"testing"
 )
 
-func decryp(key, code string) (plain string) {
-	plain, _ = cryp.Decryp(key, code)
-	return
-}
-
 func TestGenK(t *testing.T) {
 	ac := fmt.Sprintf("%d", len(cryp.GenK(12)))
 	if r := eq(ac, "12"); r != "" {
@@ -42,51 +37,51 @@ func TestCryp(t *testing.T) {
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("deme", cryp.Cryp("deme", "Cañón€%ç")), "Cañón€%ç")
+	r = eq(cryp.Decryp("deme", cryp.Cryp("deme", "Cañón€%ç")), "Cañón€%ç")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("deme", cryp.Cryp("deme", "1")), "1")
+	r = eq(cryp.Decryp("deme", cryp.Cryp("deme", "1")), "1")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("deme", cryp.Cryp("deme", "")), "")
+	r = eq(cryp.Decryp("deme", cryp.Cryp("deme", "")), "")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("", cryp.Cryp("", "Cañón€%ç")), "Cañón€%ç")
+	r = eq(cryp.Decryp("", cryp.Cryp("", "Cañón€%ç")), "Cañón€%ç")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("", cryp.Cryp("", "1")), "1")
+	r = eq(cryp.Decryp("", cryp.Cryp("", "1")), "1")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("", cryp.Cryp("", "")), "")
+	r = eq(cryp.Decryp("", cryp.Cryp("", "")), "")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("abc", cryp.Cryp("abc", "01")), "01")
+	r = eq(cryp.Decryp("abc", cryp.Cryp("abc", "01")), "01")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("abcd", cryp.Cryp("abcd", "11")), "11")
+	r = eq(cryp.Decryp("abcd", cryp.Cryp("abcd", "11")), "11")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("abc", cryp.Cryp("abc", "")), "")
+	r = eq(cryp.Decryp("abc", cryp.Cryp("abc", "")), "")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("c", cryp.Cryp("c", "a")), "a")
+	r = eq(cryp.Decryp("c", cryp.Cryp("c", "a")), "a")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("xxx", cryp.Cryp("xxx", "ab c")), "ab c")
+	r = eq(cryp.Decryp("xxx", cryp.Cryp("xxx", "ab c")), "ab c")
 	if r != "" {
 		t.Fatal(r)
 	}
-	r = eq(decryp("abc", cryp.Cryp("abc", "\n\ta€b c")), "\n\ta€b c")
+	r = eq(cryp.Decryp("abc", cryp.Cryp("abc", "\n\ta€b c")), "\n\ta€b c")
 	if r != "" {
 		t.Fatal(r)
 	}

@@ -6,6 +6,7 @@
 package cgi
 
 import (
+	"fmt"
 	"github.com/dedeme/golib/cryp"
 	"github.com/dedeme/golib/file"
 	"github.com/dedeme/golib/json"
@@ -71,30 +72,15 @@ func uToJson(us []*userT) json.T {
 	}
 	return json.Wa(tmps)
 }
-func uFromJson(js json.T) (us []*userT, err error) {
-	jss, err := json.Ra(js)
-	if err != nil {
-		return
-	}
+func uFromJson(js json.T) (us []*userT) {
+	jss := json.Ra(js)
 	for _, ujs := range jss {
 		var ujss []json.T
-		ujss, err = json.Ra(ujs)
-		if err != nil {
-			return
-		}
+		ujss = json.Ra(ujs)
 		var id, pass, level string
-		id, err = json.Rs(ujss[0])
-		if err != nil {
-			return
-		}
-		pass, err = json.Rs(ujss[1])
-		if err != nil {
-			return
-		}
-		level, err = json.Rs(ujss[2])
-		if err != nil {
-			return
-		}
+		id = json.Rs(ujss[0])
+		pass = json.Rs(ujss[1])
+		level = json.Rs(ujss[2])
 		us = append(us, &userT{id, pass, level})
 	}
 	return
@@ -106,14 +92,8 @@ func writeUsers(us []*userT) {
 }
 
 func readUsers() []*userT {
-	js, err := cryp.Decryp(fkey, file.ReadAll(path.Join(homeV, "users.db")))
-	if err != nil {
-		log.Fatal(err)
-	}
-	r, err := uFromJson(json.FromString(js))
-	if err != nil {
-		log.Fatal(err)
-	}
+	js := cryp.Decryp(fkey, file.ReadAll(path.Join(homeV, "users.db")))
+	r := uFromJson(json.FromString(js))
 	return r
 }
 
@@ -172,43 +152,19 @@ func sToJson(ss []*sessionT) json.T {
 	return json.Wa(tmps)
 }
 func sFromJson(js json.T) (ss []*sessionT, err error) {
-	jss, err := json.Ra(js)
-	if err != nil {
-		return
-	}
+	jss := json.Ra(js)
 	for _, sjs := range jss {
 		var sjss []json.T
-		sjss, err = json.Ra(sjs)
-		if err != nil {
-			return
-		}
+		sjss = json.Ra(sjs)
 		var id, comKey, user, level string
 		var time int64
 		var lapse int
-		id, err = json.Rs(sjss[0])
-		if err != nil {
-			return
-		}
-		comKey, err = json.Rs(sjss[1])
-		if err != nil {
-			return
-		}
-		user, err = json.Rs(sjss[2])
-		if err != nil {
-			return
-		}
-		level, err = json.Rs(sjss[3])
-		if err != nil {
-			return
-		}
-		time, err = json.Rl(sjss[4])
-		if err != nil {
-			return
-		}
-		lapse, err = json.Ri(sjss[5])
-		if err != nil {
-			return
-		}
+		id = json.Rs(sjss[0])
+		comKey = json.Rs(sjss[1])
+		user = json.Rs(sjss[2])
+		level = json.Rs(sjss[3])
+		time = json.Rl(sjss[4])
+		lapse = json.Ri(sjss[5])
 		ss = append(ss, &sessionT{id, comKey, user, level, time, lapse})
 	}
 	return
@@ -230,10 +186,7 @@ func writeSessions(ss []*sessionT) {
 }
 
 func readSessions() []*sessionT {
-	js, err := cryp.Decryp(fkey, file.ReadAll(path.Join(homeV, "sessions.db")))
-	if err != nil {
-		log.Fatal(err)
-	}
+	js := cryp.Decryp(fkey, file.ReadAll(path.Join(homeV, "sessions.db")))
 	r, err := sFromJson(json.FromString(js))
 	if err != nil {
 		log.Fatal(err)
@@ -404,17 +357,62 @@ func RpExpired() string {
 
 // Requests --------------------------------------------------------------------
 
-/// Reads a string value
-func RqString(rq map[string]json.T, rqName, key string) (v string, ok bool) {
+/// Reads a bool value
+func RqBool(rq map[string]json.T, rqName, key string) (v bool) {
 	js, ok := rq[key]
 	if !ok {
-		log.Printf("Key '%v' not found in '%v'", key, rqName)
-		return
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v, err := json.Rs(js)
-	if err != nil {
-		log.Print(err)
-		return
+	v = json.Rb(js)
+	return
+}
+
+/// Reads a int value
+func RqInt(rq map[string]json.T, rqName, key string) (v int) {
+	js, ok := rq[key]
+	if !ok {
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
+	v = json.Ri(js)
+	return
+}
+
+/// Reads a int64 value
+func RqLong(rq map[string]json.T, rqName, key string) (v int64) {
+	js, ok := rq[key]
+	if !ok {
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+	}
+	v = json.Rl(js)
+	return
+}
+
+/// Reads a float32 value
+func RqFloat(rq map[string]json.T, rqName, key string) (v float32) {
+	js, ok := rq[key]
+	if !ok {
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+	}
+	v = json.Rf(js)
+	return
+}
+
+/// Reads a float64 value
+func RqDouble(rq map[string]json.T, rqName, key string) (v float64) {
+	js, ok := rq[key]
+	if !ok {
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+	}
+	v = json.Rd(js)
+	return
+}
+
+/// Reads a string value
+func RqString(rq map[string]json.T, rqName, key string) (v string) {
+	js, ok := rq[key]
+	if !ok {
+		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+	}
+	v = json.Rs(js)
 	return
 }

@@ -39,10 +39,10 @@ func Wb(v bool) T {
 }
 
 // json.T -> bool
-func Rb(js T) (v bool, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Rb(js T) (v bool) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -54,10 +54,10 @@ func Wi(v int) T {
 }
 
 // json.T -> int
-func Ri(js T) (v int, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Ri(js T) (v int) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -69,10 +69,10 @@ func Wl(v int64) T {
 }
 
 // json.T -> int64
-func Rl(js T) (v int64, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Rl(js T) (v int64) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -84,10 +84,10 @@ func Wf(v float32) T {
 }
 
 // json.T -> float64
-func Rf(js T) (v float32, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Rf(js T) (v float32) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -99,10 +99,10 @@ func Wd(v float64) T {
 }
 
 // json.T -> float64
-func Rd(js T) (v float64, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Rd(js T) (v float64) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -114,10 +114,10 @@ func Ws(v string) T {
 }
 
 // json.T -> string
-func Rs(js T) (v string, err error) {
-	err = gson.Unmarshal([]byte(js), &v)
+func Rs(js T) (v string) {
+	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
-		err = fmt.Errorf("%v in\n%v", err.Error(), string(js))
+		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
 	}
 	return
 }
@@ -137,31 +137,29 @@ func Wa(v []T) T {
 }
 
 // json.T -> []json.T
-func Ra(js T) (v []T, err error) {
+func Ra(js T) (v []T) {
 	s := string(js)
 	if !strings.HasPrefix(s, "[") {
-		err = errors.New(fmt.Sprintf("Array does not start with '[' in\n%v", s))
-		return
+		panic(fmt.Sprintf("Array does not start with '[' in\n'%v'", s))
 	}
 	if !strings.HasSuffix(s, "]") {
-		err = errors.New(fmt.Sprintf("Array does not end with ']' in\n%v", s))
-		return
+		panic(fmt.Sprintf("Array does not end with ']' in\n'%v'", s))
 	}
 	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
+	if l == 0 {
+		return
+	}
 	i := 0
 	var e string
-	var i2 int
-	for i2 < l {
-		i2, err = nextByte(s2, ',', i)
+	for i <= l {
+		i2, err := nextByte(s2, ',', i)
 		if err != nil {
-			err = errors.New(fmt.Sprintf("%v in\n%v"))
-			return
+			panic(fmt.Sprintf("%v in\n'%v'"))
 		}
 		e = strings.TrimSpace(s2[i:i2])
 		if e == "" {
-			err = errors.New(fmt.Sprintf("Empty elements in\n%v", s))
-			return
+			panic(fmt.Sprintf("Empty elements in\n'%v'", s))
 		}
 		v = append(v, T(e))
 		i = i2 + 1
@@ -189,16 +187,14 @@ func Wo(v map[string]T) T {
 }
 
 // json.T -> map[string]json.T
-func Ro(js T) (v map[string]T, err error) {
+func Ro(js T) (v map[string]T) {
 	v = make(map[string]T)
 	s := string(js)
 	if !strings.HasPrefix(s, "{") {
-		err = errors.New(fmt.Sprintf("Object does not start with '{' in\n%v", s))
-		return
+		panic(fmt.Sprintf("Object does not start with '{' in\n'%v'", s))
 	}
 	if !strings.HasSuffix(s, "}") {
-		err = errors.New(fmt.Sprintf("Object does not end with '}' in\n%v", s))
-		return
+		panic(fmt.Sprintf("Object does not end with '}' in\n'%v'", s))
 	}
 	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
@@ -206,32 +202,27 @@ func Ro(js T) (v map[string]T, err error) {
 	var kjs string
 	var k string
 	var val string
-	var i2 int
-	for i2 < l {
-		i2, err = nextByte(s2, ':', i)
+	for i < l {
+		i2, err := nextByte(s2, ':', i)
 		if err != nil {
-			err = errors.New(fmt.Sprintf("%v in\n%v"))
-			return
+			panic(fmt.Sprintf("%v in\n'%v'"))
 		}
 		kjs = strings.TrimSpace(s2[i:i2])
 		if kjs == "" {
-			err = errors.New(fmt.Sprintf("Key missing in\n%v", s))
+			err = errors.New(fmt.Sprintf("Key missing in\n'%v'", s))
 			return
 		}
-		k, err = Rs(T(kjs))
-		if err != nil {
-			return
-		}
+		k = Rs(T(kjs))
 
 		i = i2 + 1
 		i2, err = nextByte(s2, ',', i)
 		if err != nil {
-			err = errors.New(fmt.Sprintf("%v in\n%v"))
+			err = errors.New(fmt.Sprintf("%v in\n'%v'"))
 			return
 		}
 		val = strings.TrimSpace(s2[i:i2])
 		if val == "" {
-			err = errors.New(fmt.Sprintf("Value missing in\n%v", s))
+			err = errors.New(fmt.Sprintf("Value missing in\n'%v'", s))
 			return
 		}
 

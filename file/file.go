@@ -7,7 +7,6 @@ package file
 import (
 	"archive/zip"
 	"bufio"
-	"github.com/dedeme/golib/log"
 	"io"
 	"io/ioutil"
 	"os"
@@ -41,7 +40,7 @@ func IsDirectory(path string) bool {
 func LastModification(path string) int64 {
 	info, err := os.Stat(path)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return info.ModTime().Unix()
 }
@@ -60,7 +59,7 @@ func Mkdirs(f string) {
 func TempDir(prefix string) string {
 	name, err := ioutil.TempDir("", prefix)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return name
 }
@@ -69,7 +68,7 @@ func TempDir(prefix string) string {
 func List(dir string) []os.FileInfo {
 	fis, err := ioutil.ReadDir(dir)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return fis
 }
@@ -79,7 +78,7 @@ func List(dir string) []os.FileInfo {
 func TempFile(dir string, prefix string) *os.File {
 	f, err := ioutil.TempFile(dir, prefix)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return f
 }
@@ -88,7 +87,7 @@ func TempFile(dir string, prefix string) *os.File {
 func Rename(oldname, newname string) {
 	err := os.Rename(oldname, newname)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -101,7 +100,7 @@ func Remove(path string) error {
 func OpenRead(path string) *os.File {
 	f, err := os.Open(path)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return f
 }
@@ -110,7 +109,7 @@ func OpenRead(path string) *os.File {
 func ReadAllBin(path string) []byte {
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return bs
 }
@@ -131,7 +130,7 @@ func Lines(path string, f func(s string)) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -139,7 +138,7 @@ func Lines(path string, f func(s string)) {
 func OpenWrite(path string) *os.File {
 	f, err := os.Create(path)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return f
 }
@@ -148,7 +147,7 @@ func OpenWrite(path string) *os.File {
 func OpenAppend(path string) *os.File {
 	f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0755)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 	return f
 }
@@ -157,7 +156,7 @@ func OpenAppend(path string) *os.File {
 func WriteAllBin(path string, data []byte) {
 	err := ioutil.WriteFile(path, data, 0755)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -170,7 +169,7 @@ func WriteAll(path, text string) {
 func Write(file *os.File, text string) {
 	_, err := file.WriteString(text)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -178,7 +177,7 @@ func Write(file *os.File, text string) {
 func WriteBin(file *os.File, data []byte) {
 	_, err := file.Write(data)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -195,7 +194,7 @@ func Zip(source, target string) error {
 
 	info, err := os.Stat(source)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	var baseDir string
@@ -266,21 +265,18 @@ func Unzip(archive, target string) error {
 		if err != nil {
 			return err
 		}
+		defer fileReader.Close()
 
 		targetFile, err := os.OpenFile(
 			path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
-			fileReader.Close()
 			return err
 		}
+		defer targetFile.Close()
 
 		if _, err := io.Copy(targetFile, fileReader); err != nil {
-			fileReader.Close()
-			targetFile.Close()
 			return err
 		}
-		fileReader.Close()
-		targetFile.Close()
 	}
 
 	return nil

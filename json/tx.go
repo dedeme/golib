@@ -4,7 +4,9 @@
 // Text management.
 package json
 
-import "errors"
+import (
+	"errors"
+)
 
 func nextByte(s string, ch byte, ix int) (pos int, err error) {
 	pos = ix
