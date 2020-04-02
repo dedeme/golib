@@ -10,10 +10,10 @@ import (
 )
 
 func TestNull(t *testing.T) {
-	if json.IsNull("xxx") {
+	if json.FromString("xxx").IsNull() {
 		t.Fatal(fail)
 	}
-	if !json.IsNull("null") {
+	if !json.FromString("null").IsNull() {
 		t.Fatal(fail)
 	}
 	if r := eq(json.Wn().String(), "null"); r != "" {
@@ -23,7 +23,7 @@ func TestNull(t *testing.T) {
 
 func TestBool(t *testing.T) {
 	var test = func(value string) {
-		v := json.Rb(json.FromString(value))
+		v := json.FromString(value).Rb()
 		if r := eq(json.Wb(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -35,7 +35,7 @@ func TestBool(t *testing.T) {
 
 func TestInt(t *testing.T) {
 	var test = func(value string) {
-		v := json.Ri(json.FromString(value))
+		v := json.FromString(value).Ri()
 		if r := eq(json.Wi(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -48,7 +48,7 @@ func TestInt(t *testing.T) {
 
 func TestLong(t *testing.T) {
 	var test = func(value string) {
-		v := json.Rl(json.FromString(value))
+		v := json.FromString(value).Rl()
 		if r := eq(json.Wl(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -61,7 +61,7 @@ func TestLong(t *testing.T) {
 
 func TestFloat(t *testing.T) {
 	var test = func(value string) {
-		v := json.Rf(json.FromString(value))
+		v := json.FromString(value).Rf()
 		if r := eq(json.Wf(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -74,7 +74,7 @@ func TestFloat(t *testing.T) {
 
 func TestDouble(t *testing.T) {
 	var test = func(value string) {
-		v := json.Rd(json.FromString(value))
+		v := json.FromString(value).Rd()
 		if r := eq(json.Wd(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -87,7 +87,7 @@ func TestDouble(t *testing.T) {
 
 func TestString(t *testing.T) {
 	var test = func(value string) {
-		v := json.Rs(json.FromString(value))
+		v := json.FromString(value).Rs()
 		if r := eq(json.Ws(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -103,7 +103,7 @@ func TestString(t *testing.T) {
 }
 
 func TestArray(t *testing.T) {
-	mkErr := func(fn func(json.T) []json.T, js json.T) (err string) {
+	mkErr := func(js json.T) (err string) {
 		defer func() {
 			r := recover()
 			switch r.(type) {
@@ -113,12 +113,12 @@ func TestArray(t *testing.T) {
 				err = fmt.Sprintf("No errors found in '%v'", js)
 			}
 		}()
-		fn(js)
+		js.Ra()
 		return
 	}
 
 	var test = func(value string) {
-		v := json.Ra(json.FromString(value))
+		v := json.FromString(value).Ra()
 		if r := eq(json.Wa(v).String(), value); r != "" {
 			t.Fatal(r)
 		}
@@ -132,64 +132,65 @@ func TestArray(t *testing.T) {
 	test("[1,\"a\\\"b\\\"ñc\",2]")
 	test("[1,[2,[3,4]],[2,3]]")
 
-	err := mkErr(json.Ra, json.FromString("[4"))
+	err := mkErr(json.FromString("[4"))
 	msg := "Array does not end with ']' in\n'[4'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
-	err = mkErr(json.Ra, json.FromString("4]"))
+	err = mkErr(json.FromString("4]"))
 	msg = "Array does not start with '[' in\n'4]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
-	err = mkErr(json.Ra, json.FromString("[,]"))
+	err = mkErr(json.FromString("[,]"))
 	msg = "Empty elements in\n'[,]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
-	err = mkErr(json.Ra, json.FromString("[1,,2]"))
+	err = mkErr(json.FromString("[1,,2]"))
 	msg = "Empty elements in\n'[1,,2]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
-	err = mkErr(json.Ra, json.FromString("[,1,2]"))
+	err = mkErr(json.FromString("[,1,2]"))
 	msg = "Empty elements in\n'[,1,2]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
-	err = mkErr(json.Ra, json.FromString("[1,2,]"))
+	err = mkErr(json.FromString("[1,2,]"))
 	msg = "Empty elements in\n'[1,2,]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
-	jss := json.Ra(json.FromString("[345]"))
-	json.Ri(jss[0])
+	jss := json.FromString("[345]").Ra()
+	jss[0].Ri()
 	msg = "invalid character 'a' looking for beginning of value in\n'a4'"
 
 	// jss = json.Ra(json.FromString("[a4]"))
 	// json.Ri(jss[0]) // error
 
-	jss = json.Ra(json.FromString("[1,\"a\\\"b\\\"ñc\",2]"))
-	json.Rs(jss[1])
+	jss = json.FromString("[1,\"a\\\"b\\\"ñc\",2]").Ra()
+	jss[1].Rs()
 
-	//jss = json.Ra(json.FromString("[1,\"a\\\"b\\\"ñc,2]")) // error
+	jss = json.FromString("[1,\"a\\\"b\\\"ñc,2]").Ra() // error
+	//jss[1].Rs() // error
 
-	jss = json.Ra(json.FromString("[1,\"a\\\"b\\\"ñc\",2]"))
-	//json.Rb(jss[2]) // error
+	jss = json.FromString("[1,\"a\\\"b\\\"ñc\",2]").Ra()
+	//jss[2].Rb() // error
 
 }
 
 func TestObject(t *testing.T) {
 	var test = func(value string, r map[string]json.T) {
-		v := json.Ro(json.FromString(value))
+		v := json.FromString(value).Ro()
 
 		jss := json.Wo(v)
-		mjs := json.Ro(jss)
+		mjs := jss.Ro()
 		if len(mjs) != len(r) {
 			t.Fatal(eq(jss.String(), value))
 		}

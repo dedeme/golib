@@ -73,14 +73,14 @@ func uToJson(us []*userT) json.T {
 	return json.Wa(tmps)
 }
 func uFromJson(js json.T) (us []*userT) {
-	jss := json.Ra(js)
+	jss := js.Ra()
 	for _, ujs := range jss {
 		var ujss []json.T
-		ujss = json.Ra(ujs)
+		ujss = ujs.Ra()
 		var id, pass, level string
-		id = json.Rs(ujss[0])
-		pass = json.Rs(ujss[1])
-		level = json.Rs(ujss[2])
+		id = ujss[0].Rs()
+		pass = ujss[1].Rs()
+		level = ujss[2].Rs()
 		us = append(us, &userT{id, pass, level})
 	}
 	return
@@ -152,19 +152,19 @@ func sToJson(ss []*sessionT) json.T {
 	return json.Wa(tmps)
 }
 func sFromJson(js json.T) (ss []*sessionT, err error) {
-	jss := json.Ra(js)
+	jss := js.Ra()
 	for _, sjs := range jss {
 		var sjss []json.T
-		sjss = json.Ra(sjs)
+		sjss = sjs.Ra()
 		var id, comKey, user, level string
 		var time int64
 		var lapse int
-		id = json.Rs(sjss[0])
-		comKey = json.Rs(sjss[1])
-		user = json.Rs(sjss[2])
-		level = json.Rs(sjss[3])
-		time = json.Rl(sjss[4])
-		lapse = json.Ri(sjss[5])
+		id = sjss[0].Rs()
+		comKey = sjss[1].Rs()
+		user = sjss[2].Rs()
+		level = sjss[3].Rs()
+		time = sjss[4].Rl()
+		lapse = sjss[5].Ri()
 		ss = append(ss, &sessionT{id, comKey, user, level, time, lapse})
 	}
 	return
@@ -363,7 +363,7 @@ func RqBool(rq map[string]json.T, rqName, key string) (v bool) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Rb(js)
+	v = js.Rb()
 	return
 }
 
@@ -373,7 +373,7 @@ func RqInt(rq map[string]json.T, rqName, key string) (v int) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Ri(js)
+	v = js.Ri()
 	return
 }
 
@@ -383,7 +383,7 @@ func RqLong(rq map[string]json.T, rqName, key string) (v int64) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Rl(js)
+	v = js.Rl()
 	return
 }
 
@@ -393,7 +393,7 @@ func RqFloat(rq map[string]json.T, rqName, key string) (v float32) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Rf(js)
+	v = js.Rf()
 	return
 }
 
@@ -403,7 +403,7 @@ func RqDouble(rq map[string]json.T, rqName, key string) (v float64) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Rd(js)
+	v = js.Rd()
 	return
 }
 
@@ -413,6 +413,6 @@ func RqString(rq map[string]json.T, rqName, key string) (v string) {
 	if !ok {
 		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
 	}
-	v = json.Rs(js)
+	v = js.Rs()
 	return
 }

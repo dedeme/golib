@@ -28,7 +28,7 @@ func Wn() T {
 	return "null"
 }
 
-func IsNull(js T) bool {
+func (js T) IsNull() bool {
 	return string(js) == "null"
 }
 
@@ -39,7 +39,7 @@ func Wb(v bool) T {
 }
 
 // json.T -> bool
-func Rb(js T) (v bool) {
+func (js T) Rb() (v bool) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -54,7 +54,7 @@ func Wi(v int) T {
 }
 
 // json.T -> int
-func Ri(js T) (v int) {
+func (js T) Ri() (v int) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -69,7 +69,7 @@ func Wl(v int64) T {
 }
 
 // json.T -> int64
-func Rl(js T) (v int64) {
+func (js T) Rl() (v int64) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -84,7 +84,7 @@ func Wf(v float32) T {
 }
 
 // json.T -> float64
-func Rf(js T) (v float32) {
+func (js T) Rf() (v float32) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -99,7 +99,7 @@ func Wd(v float64) T {
 }
 
 // json.T -> float64
-func Rd(js T) (v float64) {
+func (js T) Rd() (v float64) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -114,7 +114,7 @@ func Ws(v string) T {
 }
 
 // json.T -> string
-func Rs(js T) (v string) {
+func (js T) Rs() (v string) {
 	err := gson.Unmarshal([]byte(js), &v)
 	if err != nil {
 		panic(fmt.Sprintf("%v in\n'%v'", err.Error(), string(js)))
@@ -137,7 +137,7 @@ func Wa(v []T) T {
 }
 
 // json.T -> []json.T
-func Ra(js T) (v []T) {
+func (js T) Ra() (v []T) {
 	s := string(js)
 	if !strings.HasPrefix(s, "[") {
 		panic(fmt.Sprintf("Array does not start with '[' in\n'%v'", s))
@@ -187,7 +187,7 @@ func Wo(v map[string]T) T {
 }
 
 // json.T -> map[string]json.T
-func Ro(js T) (v map[string]T) {
+func (js T) Ro() (v map[string]T) {
 	v = make(map[string]T)
 	s := string(js)
 	if !strings.HasPrefix(s, "{") {
@@ -212,7 +212,7 @@ func Ro(js T) (v map[string]T) {
 			err = errors.New(fmt.Sprintf("Key missing in\n'%v'", s))
 			return
 		}
-		k = Rs(T(kjs))
+		k = T(kjs).Rs()
 
 		i = i2 + 1
 		i2, err = nextByte(s2, ',', i)
