@@ -132,7 +132,8 @@ func checkUser(id, pass string) string {
 
 type sessionT struct {
 	id     string
-	comKey string // Communication key
+	comKey string // Comunication key
+	conKey string // Connection key
 	user   string // User id
 	level  string
 	time   int64 // time.Unix
@@ -143,7 +144,8 @@ func sToJson(ss []*sessionT) json.T {
 	var tmps []json.T
 	for _, s := range ss {
 		jss := []json.T{
-			json.Ws(s.id), json.Ws(s.comKey), json.Ws(s.user), json.Ws(s.level),
+			json.Ws(s.id), json.Ws(s.comKey), json.Ws(s.conKey),
+			json.Ws(s.user), json.Ws(s.level),
 			json.Wl(s.time), json.Wi(s.lapse),
 		}
 		tmps = append(tmps, json.Wa(jss))
@@ -155,16 +157,17 @@ func sFromJson(js json.T) (ss []*sessionT, err error) {
 	for _, sjs := range jss {
 		var sjss []json.T
 		sjss = sjs.Ra()
-		var id, comKey, user, level string
+		var id, comKey, conKey, user, level string
 		var time int64
 		var lapse int
 		id = sjss[0].Rs()
 		comKey = sjss[1].Rs()
-		user = sjss[2].Rs()
-		level = sjss[3].Rs()
-		time = sjss[4].Rl()
-		lapse = sjss[5].Ri()
-		ss = append(ss, &sessionT{id, comKey, user, level, time, lapse})
+		conKey = sjss[2].Rs()
+		user = sjss[3].Rs()
+		level = sjss[4].Rs()
+		time = sjss[5].Rl()
+		lapse = sjss[6].Ri()
+		ss = append(ss, &sessionT{id, comKey, conKey, user, level, time, lapse})
 	}
 	return
 }
@@ -194,7 +197,7 @@ func readSessions() []*sessionT {
 }
 
 // Adds session and purge sessions.
-func addSession(sessionId, comKey, user, level string, lapse int) {
+func addSession(sessionId, comKey, conKey, user, level string, lapse int) {
 	now := time.Now().Unix()
 	ss := readSessions()
 	var newSs []*sessionT
@@ -203,7 +206,21 @@ func addSession(sessionId, comKey, user, level string, lapse int) {
 			newSs = append(newSs, s)
 		}
 	}
-	newSs = append(newSs, &sessionT{sessionId, comKey, user, level, now, lapse})
+	newSs = append(newSs,
+		&sessionT{sessionId, comKey, conKey, user, level, now, lapse})
+	writeSessions(newSs)
+}
+
+// Replace a session with a new date and a new connection key
+func replaceSession(mdss *sessionT) {
+	ss := readSessions()
+	var newSs []*sessionT
+	for _, s := range ss {
+		if s.id != mdss.id {
+			newSs = append(newSs, s)
+		}
+	}
+	newSs = append(newSs, mdss)
 	writeSessions(newSs)
 }
 
@@ -217,7 +234,7 @@ func Home() string {
 // Sends to client 'communicationKey', 'userId' and 'userLevel'. If conection
 // fails every one is "".
 //    sessionId: Session identifier.
-//    return   : {key: String, user: String, level: String}.
+//    return   : {key: String, conKey:String, user: String, level: String}.
 func Connect(sessionId string) string {
 	var r *sessionT
 	for _, s := range readSessions() {
@@ -228,17 +245,22 @@ func Connect(sessionId string) string {
 	}
 
 	comKey := ""
+	conKey := ""
 	user := ""
 	level := ""
 	if r != nil {
 		comKey = r.comKey
 		user = r.user
 		level = r.level
+		conKey = cryp.GenK(Klen)
+		r.conKey = conKey
+		replaceSession(r)
 	}
 	return Rp(sessionId, map[string]json.T{
-		"key":   json.Ws(comKey),
-		"user":  json.Ws(user),
-		"level": json.Ws(level),
+		"key":    json.Ws(comKey),
+		"conKey": json.Ws(conKey),
+		"user":   json.Ws(user),
+		"level":  json.Ws(level),
 	})
 }
 
@@ -247,25 +269,29 @@ func Connect(sessionId string) string {
 //   user          : User id.
 //    key           : User password.
 //    withExpiration: If is set to false, session will expire after 30 days.
-//    return        : {sessionId: String, key: String, level: String}.
+//    return        : {sessionId: String, key: String, conKey: String,
+//                     level: String}.
 func Authentication(key, user, pass string, withExpiration bool) string {
 	sessionId := ""
 	comKey := ""
+	conKey := ""
 	level := checkUser(user, pass)
 	if level != "" {
 		sessionId = cryp.GenK(Klen)
 		comKey = cryp.GenK(Klen)
+		conKey = cryp.GenK(Klen)
 
 		lapse := tNoExpiration
 		if withExpiration {
 			lapse = tExpirationV
 		}
-		addSession(sessionId, comKey, user, level, lapse)
+		addSession(sessionId, comKey, conKey, user, level, lapse)
 	}
 
 	return Rp(key, map[string]json.T{
 		"sessionId": json.Ws(sessionId),
 		"key":       json.Ws(comKey),
+		"conKey":    json.Ws(conKey),
 		"level":     json.Ws(level),
 	})
 }
