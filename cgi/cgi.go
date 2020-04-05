@@ -315,7 +315,7 @@ func ChangePass(user, old, new string) (ok bool) {
 }
 
 // Deletes 'sessionId' and returns an empty response.
-func DelSession(sessionId string) {
+func DelSession(ck string, sessionId string) string {
 	ss := readSessions()
 	var newss []*sessionT
 	for _, s := range ss {
@@ -324,6 +324,7 @@ func DelSession(sessionId string) {
 		}
 	}
 	writeSessions(newss)
+	return RpEmpty(ck)
 }
 
 // Messages --------------------------------------------------------------------
