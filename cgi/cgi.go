@@ -297,11 +297,12 @@ func Authentication(key, user, pass string, withExpiration bool) string {
 }
 
 // Returns the session communication key.
-//		ssId: Session identifier.
-func GetComKey(ssId string) (comKey string, ok bool) {
+//		ssId  : Session identifier.
+//		conKey: Connection key. If its value is "", this parameter is not used.
+func GetComKey(ssId, conKey string) (comKey string, ok bool) {
 	ss := readSessions()
 	for _, s := range ss {
-		if s.id == ssId && s.update() {
+		if s.id == ssId && (conKey == "" || conKey == s.conKey) && s.update() {
 			comKey = s.comKey
 			ok = true
 			return
