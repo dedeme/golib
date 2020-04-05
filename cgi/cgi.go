@@ -318,7 +318,7 @@ func GetComKey(ssId string) (comKey string, ok bool) {
 //    return: A boolean field {ok:true|false}, sets to true if operation
 //            succeeded. A fail can come up if 'user' authentication fails.
 func ChangePass(ck, user, old, new string) (rp string) {
-	rp = Rp(ck, map[string]json.T{ "ok": json.Wb(false) })
+	rp = Rp(ck, map[string]json.T{"ok": json.Wb(false)})
 
 	us := readUsers()
 	var u *userT
@@ -339,7 +339,7 @@ func ChangePass(ck, user, old, new string) (rp string) {
 
 	u.pass = cryp.Key(new, Klen)
 	writeUsers(us)
-	rp = Rp(ck, map[string]json.T{ "ok": json.Wb(true) })
+	rp = Rp(ck, map[string]json.T{"ok": json.Wb(true)})
 	return
 }
 
