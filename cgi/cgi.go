@@ -30,7 +30,7 @@ const (
 var homeV string
 var tExpirationV int
 var fkey = cryp.Key(demeKey, len(demeKey)) // File encryption key
-var key string                             // Comunication key
+var key string                             // Communication key
 
 // Initializes a new interface of commnications.
 //    home       : Aboslute path of application directory. For example:
@@ -132,7 +132,7 @@ func checkUser(id, pass string) string {
 
 type sessionT struct {
 	id     string
-	comKey string // Comunication key
+	comKey string // Communication key
 	conKey string // Connection key
 	user   string // User id
 	level  string
@@ -311,12 +311,15 @@ func GetComKey(ssId string) (comKey string, ok bool) {
 }
 
 // Changes user password.
+//		ck    : Communication key
 //    user  : User name to change password.
 //    old   : Old password.
 //    new   : New password.
 //    return: A boolean field {ok:true|false}, sets to true if operation
 //            succeeded. A fail can come up if 'user' authentication fails.
-func ChangePass(user, old, new string) (ok bool) {
+func ChangePass(ck, user, old, new string) (rp string) {
+	rp = Rp(ck, map[string]json.T{ "ok": json.Wb(false) })
+
 	us := readUsers()
 	var u *userT
 	for _, u0 := range us {
@@ -336,7 +339,7 @@ func ChangePass(user, old, new string) (ok bool) {
 
 	u.pass = cryp.Key(new, Klen)
 	writeUsers(us)
-	ok = true
+	rp = Rp(ck, map[string]json.T{ "ok": json.Wb(true) })
 	return
 }
 
