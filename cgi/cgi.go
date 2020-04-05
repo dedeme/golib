@@ -1,8 +1,7 @@
 // Copyright 30-Mar-2020 ºDeme
 // GNU General Public License - V3 <http://www.gnu.org/licenses/>
 
-/// Utilities for HTML conections between client - server.
-
+// Utilities for HTML conections between client - server.
 package cgi
 
 import (
@@ -17,7 +16,7 @@ import (
 )
 
 const (
-	/// Standad length of passwords
+	// Standad length of passwords
 	Klen          = 300
 	tNoExpiration = 2592000 // seconds == 30 days
 	demeKey       = "nkXliX8lg2kTuQSS/OoLXCk8eS4Fwmc+N7l6TTNgzM1vdKewO0cjok51vcdl" +
@@ -33,12 +32,12 @@ var tExpirationV int
 var fkey = cryp.Key(demeKey, len(demeKey)) // File encryption key
 var key string                             // Comunication key
 
-/// Initializes a new interface of commnications.
-///   home       : Aboslute path of application directory. For example:
-///                   "/peter/wwwcgi/dmcgi/JsMon"
-///                   or
-///                   "/home/deme/.dmCApp/JsMon" ).
-///   tExpiration: Time in seconds.
+// Initializes a new interface of commnications.
+//    home       : Aboslute path of application directory. For example:
+//                    "/peter/wwwcgi/dmcgi/JsMon"
+//                    or
+//                    "/home/deme/.dmCApp/JsMon" ).
+//    tExpiration: Time in seconds.
 func Initialize(home string, tExpiration int) {
 	rand.Seed(time.Now().UTC().UnixNano())
 	homeV = home
@@ -210,15 +209,15 @@ func addSession(sessionId, comKey, user, level string, lapse int) {
 
 // Public interface ------------------------------------------------------------
 
-/// Root application directory.
+// Root application directory.
 func Home() string {
 	return homeV
 }
 
-/// Sends to client 'communicationKey', 'userId' and 'userLevel'. If conection
-/// fails every one is "".
-///   sessionId: Session identifier.
-///   return   : {key: String, user: String, level: String}.
+// Sends to client 'communicationKey', 'userId' and 'userLevel'. If conection
+// fails every one is "".
+//    sessionId: Session identifier.
+//    return   : {key: String, user: String, level: String}.
 func Connect(sessionId string) string {
 	var r *sessionT
 	for _, s := range readSessions() {
@@ -243,12 +242,12 @@ func Connect(sessionId string) string {
 	})
 }
 
-/// Sends to client 'sessionId', 'communicationKey' and 'userLevel'. If
-/// conection fails every one is "".
-///   user          : User id.
-///   key           : User password.
-///   withExpiration: If is set to false, session will expire after 30 days.
-///   return        : {sessionId: String, key: String, level: String}.
+// Sends to client 'sessionId', 'communicationKey' and 'userLevel'. If
+// conection fails every one is "".
+//   user          : User id.
+//    key           : User password.
+//    withExpiration: If is set to false, session will expire after 30 days.
+//    return        : {sessionId: String, key: String, level: String}.
 func Authentication(key, user, pass string, withExpiration bool) string {
 	sessionId := ""
 	comKey := ""
@@ -271,8 +270,8 @@ func Authentication(key, user, pass string, withExpiration bool) string {
 	})
 }
 
-/// Returns the session communication key.
-///		ssId: Session identifier.
+// Returns the session communication key.
+//		ssId: Session identifier.
 func GetComKey(ssId string) (comKey string, ok bool) {
 	ss := readSessions()
 	for _, s := range ss {
@@ -285,12 +284,12 @@ func GetComKey(ssId string) (comKey string, ok bool) {
 	return
 }
 
-/// Changes user password.
-///   user  : User name to change password.
-///   old   : Old password.
-///   new   : New password.
-///   return: A boolean field {ok:true|false}, sets to true if operation
-///           succeeded. A fail can come up if 'user' authentication fails.
+// Changes user password.
+//    user  : User name to change password.
+//    old   : Old password.
+//    new   : New password.
+//    return: A boolean field {ok:true|false}, sets to true if operation
+//            succeeded. A fail can come up if 'user' authentication fails.
 func ChangePass(user, old, new string) (ok bool) {
 	us := readUsers()
 	var u *userT
@@ -315,7 +314,7 @@ func ChangePass(user, old, new string) (ok bool) {
 	return
 }
 
-/// Deletes 'sessionId' and returns an empty response.
+// Deletes 'sessionId' and returns an empty response.
 func DelSession(sessionId string) {
 	ss := readSessions()
 	var newss []*sessionT
@@ -329,89 +328,89 @@ func DelSession(sessionId string) {
 
 // Messages --------------------------------------------------------------------
 
-/// Returns a response to send to client.
-///		ck: Communication key.
-///		rp: Response.
+// Returns a response to send to client.
+//	 ck: Communication key.
+//	 rp: Response.
 func Rp(ck string, rp map[string]json.T) string {
 	js := json.Wo(rp)
 	return cryp.Cryp(ck, string(js))
 }
 
-/// Returns an empty response.
-///		ck: Communication key.
+// Returns an empty response.
+//	 ck: Communication key.
 func RpEmpty(ck string) string {
 	return Rp(ck, map[string]json.T{})
 }
 
-/// Returns a message with an only field "error" with value 'msg'.
-///		ck: Communication key.
+// Returns a message with an only field "error" with value 'msg'.
+//	 ck: Communication key.
 func RpError(ck, msg string) string {
 	return Rp(ck, map[string]json.T{"error": json.Ws(msg)})
 }
 
-/// Returns a message with an only field "expired" with value 'true',
-/// codified with the key 'noSessionKey' ("nosession")
+// Returns a message with an only field "expired" with value 'true',
+// codified with the key 'noSessionKey' ("nosession")
 func RpExpired() string {
 	return Rp(noSessionKey, map[string]json.T{"expired": json.Wb(true)})
 }
 
 // Requests --------------------------------------------------------------------
 
-/// Reads a bool value
-func RqBool(rq map[string]json.T, rqName, key string) (v bool) {
+// Reads a bool value
+func RqBool(rq map[string]json.T, key string) (v bool) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Rb()
 	return
 }
 
-/// Reads a int value
-func RqInt(rq map[string]json.T, rqName, key string) (v int) {
+// Reads a int value
+func RqInt(rq map[string]json.T, key string) (v int) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Ri()
 	return
 }
 
-/// Reads a int64 value
-func RqLong(rq map[string]json.T, rqName, key string) (v int64) {
+// Reads a int64 value
+func RqLong(rq map[string]json.T, key string) (v int64) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Rl()
 	return
 }
 
-/// Reads a float32 value
-func RqFloat(rq map[string]json.T, rqName, key string) (v float32) {
+// Reads a float32 value
+func RqFloat(rq map[string]json.T, key string) (v float32) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Rf()
 	return
 }
 
-/// Reads a float64 value
-func RqDouble(rq map[string]json.T, rqName, key string) (v float64) {
+// Reads a float64 value
+func RqDouble(rq map[string]json.T, key string) (v float64) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Rd()
 	return
 }
 
-/// Reads a string value
-func RqString(rq map[string]json.T, rqName, key string) (v string) {
+// Reads a string value
+func RqString(rq map[string]json.T, key string) (v string) {
 	js, ok := rq[key]
 	if !ok {
-		panic(fmt.Sprintf("Key '%v' not found in '%v'", key, rqName))
+		panic(fmt.Sprintf("Key '%v' not found in request", key))
 	}
 	v = js.Rs()
 	return
