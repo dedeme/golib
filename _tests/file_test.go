@@ -48,8 +48,9 @@ func TestCgiio(t *testing.T) {
 	ftmp1.Close()
 
 	tx2 := ""
-	file.Lines(tmp2, func(l string) {
+	file.Lines(tmp2, func(l string) bool {
 		tx2 += l + "\n"
+    return false
 	})
 
 	if tx != strings.TrimSpace(tx2) {

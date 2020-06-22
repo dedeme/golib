@@ -120,13 +120,16 @@ func ReadAll(path string) string {
 }
 
 // Lines are read without end of line.
-func Lines(path string, f func(s string)) {
+// If 'f' returns 'true', reading is stoped.
+func Lines(path string, f func(s string) bool) {
 	file := OpenRead(path)
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		f(scanner.Text())
+		if f(scanner.Text()) {
+      break
+    }
 	}
 
 	if err := scanner.Err(); err != nil {

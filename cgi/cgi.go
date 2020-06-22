@@ -266,8 +266,9 @@ func Connect(sessionId string) string {
 
 // Sends to client 'sessionId', 'communicationKey' and 'userLevel'. If
 // conection fails every one is "".
-//   user          : User id.
-//    key           : User password.
+//    key           : Communication key
+//    user          : User id.
+//    pass          : User password.
 //    withExpiration: If is set to false, session will expire after 30 days.
 //    return        : {sessionId: String, key: String, conKey: String,
 //                     level: String}.
@@ -312,12 +313,13 @@ func GetComKey(ssId, conKey string) (comKey string, ok bool) {
 }
 
 // Changes user password.
-//		ck    : Communication key
+//    ck    : Communication key
 //    user  : User name to change password.
 //    old   : Old password.
 //    new   : New password.
-//    return: A boolean field {ok:true|false}, sets to true if operation
-//            succeeded. A fail can come up if 'user' authentication fails.
+//    return: After call 'Rp()', boolean field {ok:true|false}, sets to true
+//            if operation succeeded. A fail can come up if 'user'
+//            authentication fails.
 func ChangePass(ck, user, old, new string) (rp string) {
 	rp = Rp(ck, map[string]json.T{"ok": json.Wb(false)})
 
