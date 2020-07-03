@@ -50,7 +50,7 @@ func TestCgiio(t *testing.T) {
 	tx2 := ""
 	file.Lines(tmp2, func(l string) bool {
 		tx2 += l + "\n"
-    return false
+		return false
 	})
 
 	if tx != strings.TrimSpace(tx2) {

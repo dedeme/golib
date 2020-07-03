@@ -4,18 +4,18 @@
 // Text management.
 package json
 
-import (
-	"errors"
-)
-
-func nextByte(s string, ch byte, ix int) (pos int, err error) {
+func nextByte(s string, ch byte, ix int) (pos int, ok bool) {
 	pos = ix
 	l := len(s)
 	quotes := false
 	bar := false
+	squarn := 0
+	bracketn := 0
+  ok = true
 	var c byte
 	for {
 		if pos == l {
+      ok = false
 			break
 		}
 		c = s[pos]
@@ -30,60 +30,21 @@ func nextByte(s string, ch byte, ix int) (pos int, err error) {
 				}
 			}
 		} else {
-			if c == ch {
+			if c == ch &&
+				((c == ']' && squarn == 1 && bracketn == 0) ||
+					(c == '}' && squarn == 0 && bracketn == 1) ||
+					(squarn == 0 && bracketn == 0)) {
 				break
 			} else if c == '"' {
 				quotes = true
 			} else if c == '[' {
-				n := 1
-				var open, close int
-				for n > 0 {
-					pos++
-					open, err = nextByte(s, '[', pos)
-					if err != nil {
-						return
-					}
-					close, err = nextByte(s, ']', pos)
-					if err != nil {
-						return
-					}
-					if open < close {
-						pos = open
-						n++
-					} else {
-						pos = close
-						n--
-					}
-				}
-				if pos == l {
-					err = errors.New("'[' not closed")
-					return
-				}
+        squarn++
+			} else if c == ']' {
+        squarn--
 			} else if c == '{' {
-				n := 1
-				var open, close int
-				for n > 0 {
-					pos++
-					open, err = nextByte(s, '{', pos)
-					if err != nil {
-						return
-					}
-					close, err = nextByte(s, '}', pos)
-					if err != nil {
-						return
-					}
-					if open < close {
-						pos = open
-						n++
-					} else {
-						pos = close
-						n--
-					}
-				}
-				if pos == l {
-					err = errors.New("'{' not closed")
-					return
-				}
+        bracketn++
+			} else if c == '}' {
+        bracketn--
 			}
 		}
 		pos++

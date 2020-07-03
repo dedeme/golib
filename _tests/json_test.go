@@ -145,24 +145,24 @@ func TestArray(t *testing.T) {
 	}
 
 	err = mkErr(json.FromString("[,]"))
-	msg = "Empty elements in\n'[,]'"
+	msg = "Missing elements in\n'[,]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 	err = mkErr(json.FromString("[1,,2]"))
-	msg = "Empty elements in\n'[1,,2]'"
+	msg = "Missing elements in\n'[1,,2]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
 	err = mkErr(json.FromString("[,1,2]"))
-	msg = "Empty elements in\n'[,1,2]'"
+	msg = "Missing elements in\n'[,1,2]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
 
 	err = mkErr(json.FromString("[1,2,]"))
-	msg = "Empty elements in\n'[1,2,]'"
+	msg = "Missing elements in\n'[1,2,]'"
 	if r := eq(err, msg); r != "" {
 		t.Fatal(r)
 	}
@@ -249,59 +249,35 @@ func TestObject(t *testing.T) {
 			"three": json.Wi(3),
 		},
 	)
-	/*
-		_, err := json.Ro(json.FromString("{\"o\":4"))
-		msg := "Object does not end with '}' in\n{\"o\":4"
-		if r := eq(err.Error(), msg); r != "" {
-			t.Fatal(r)
-		}
 
-		_, err = json.Ro(json.FromString("\"o\":4}"))
-		msg = "Object does not start with '{' in\n\"o\":4}"
-		if r := eq(err.Error(), msg); r != "" {
-			t.Fatal(r)
-		}
+  //json.FromString("{\"o\":4").Ro()
+  //---> Error "Object does not end with '}' in\n{\"o\":4"
 
-		_, err = json.Ro(json.FromString("{\"a\":1,\"b\":2,}"))
-		msg = "Key missing in\n{\"a\":1,\"b\":2,}"
-		if r := eq(err.Error(), msg); r != "" {
-			t.Fatal(r)
-		}
+	//json.FromString("\"o\":4}").Ro()
+  //---> Error "Object does not start with '{' in\n\"o\":4}"
 
-		_, err = json.Ro(json.FromString("{\"a\":1,\"b\":2,\"c\":}"))
-		msg = "Value missing in\n{\"a\":1,\"b\":2,\"c\":}"
-		if r := eq(err.Error(), msg); r != "" {
-			t.Fatal(r)
-		}
+	//json.FromString("{\"a\":1,\"b\":2,}").Ro()
+	//---> Error "Expected ':' in\n{\"a\":1,\"b\":2,}"
 
-		jss, _ := json.Ro(json.FromString("{\"a\":345}"))
-		_, err = json.Ri(jss["a"])
-		if err != nil {
-			t.Fatal(err)
-		}
+	//json.FromString("{\"a\":1,\"b\":2,\"c\":}").Ro()
+	//---> Error "Value missing in\n{\"a\":1,\"b\":2,\"c\":}"
 
-		jss, _ = json.Ro(json.FromString("{\"a\":a345}"))
-		_, err = json.Ri(jss["a"])
-		if err == nil {
-			t.Fatal(fail)
-		}
+		jss := json.FromString("{\"a\":345}").Ro()
+		jss["a"].Ri() // Ok
 
-		jss, _ = json.Ro(json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}"))
-		_, err = json.Rs(jss["b"])
-		if err != nil {
-			t.Fatal(err)
-		}
+		//jss = json.FromString("{\"a\":a345}").Ro()
+		//jss["a"].Ri()
+    //---> Error invalid character 'a' looking for beginning of value in
 
-		jss, _ = json.Ro(json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc,\"c\":2}"))
-		_, err = json.Rs(jss["b"])
-		if err == nil {
-			t.Fatal(fail)
-		}
+		jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
+		jss["b"].Rs() // Ok
 
-		jss, _ = json.Ro(json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}"))
-		_, err = json.Rb(jss["c"])
-		if err == nil {
-			t.Fatal(fail)
-		}
-	*/
+		//jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc,\"c\":2}").Ro()
+		//jss["b"].Rs()
+    //---> Error invalid character 'c' after top-level value in
+
+		json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
+		jss["c"].Rb()
+    //---> Error json: cannot unmarshal number into Go value of type bool in
+
 }

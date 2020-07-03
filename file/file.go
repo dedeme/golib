@@ -128,8 +128,8 @@ func Lines(path string, f func(s string) bool) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		if f(scanner.Text()) {
-      break
-    }
+			break
+		}
 	}
 
 	if err := scanner.Err(); err != nil {

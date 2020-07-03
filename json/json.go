@@ -6,7 +6,6 @@ package json
 
 import (
 	gson "encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -152,17 +151,22 @@ func (js T) Ra() (v []T) {
 	}
 	i := 0
 	var e string
-	for i <= l {
-		i2, err := nextByte(s2, ',', i)
-		if err != nil {
-			panic(fmt.Sprintf("%v in\n'%v'"))
-		}
-		e = strings.TrimSpace(s2[i:i2])
-		if e == "" {
-			panic(fmt.Sprintf("Empty elements in\n'%v'", s))
-		}
-		v = append(v, T(e))
-		i = i2 + 1
+	for {
+		if i2, ok := nextByte(s2, ',', i); ok {
+      e = strings.TrimSpace(s2[i:i2])
+      if e == "" {
+        panic(fmt.Sprintf("Missing elements in\n'%v'", s))
+      }
+      v = append(v, T(e))
+      i = i2 + 1
+      continue
+    }
+    e = strings.TrimSpace(s2[i:l])
+    if e == "" {
+      panic(fmt.Sprintf("Missing elements in\n'%v'", s))
+    }
+    v = append(v, T(e))
+    break
 	}
 	return
 }
@@ -198,36 +202,41 @@ func (js T) Ro() (v map[string]T) {
 	}
 	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
+  if l == 0 {
+    return
+  }
 	i := 0
 	var kjs string
 	var k string
 	var val string
-	for i < l {
-		i2, err := nextByte(s2, ':', i)
-		if err != nil {
-			panic(fmt.Sprintf("%v in\n'%v'"))
+	for {
+		i2, ok := nextByte(s2, ':', i)
+    if !ok {
+			panic(fmt.Sprintf("Expected ':' in\n'%v'", s2))
 		}
 		kjs = strings.TrimSpace(s2[i:i2])
 		if kjs == "" {
-			err = errors.New(fmt.Sprintf("Key missing in\n'%v'", s))
-			return
+			panic(fmt.Sprintf("Key missing in\n'%v'", s))
 		}
 		k = T(kjs).Rs()
 
 		i = i2 + 1
-		i2, err = nextByte(s2, ',', i)
-		if err != nil {
-			err = errors.New(fmt.Sprintf("%v in\n'%v'"))
-			return
-		}
-		val = strings.TrimSpace(s2[i:i2])
-		if val == "" {
-			err = errors.New(fmt.Sprintf("Value missing in\n'%v'", s))
-			return
-		}
 
-		v[k] = T(val)
-		i = i2 + 1
+		if i2, ok := nextByte(s2, ',', i); ok {
+      val = strings.TrimSpace(s2[i:i2])
+      if val == "" {
+        panic(fmt.Sprintf("Value missing in\n'%v'", s))
+      }
+      v[k] = T(val)
+      i = i2 + 1
+      continue
+    }
+    val = strings.TrimSpace(s2[i:l])
+    if val == "" {
+      panic(fmt.Sprintf("Value missing in\n'%v'", s))
+    }
+    v[k] = T(val)
+    break
 	}
 	return
 }
