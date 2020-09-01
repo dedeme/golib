@@ -11,11 +11,11 @@ func nextByte(s string, ch byte, ix int) (pos int, ok bool) {
 	bar := false
 	squarn := 0
 	bracketn := 0
-  ok = true
+	ok = true
 	var c byte
 	for {
 		if pos == l {
-      ok = false
+			ok = false
 			break
 		}
 		c = s[pos]
@@ -38,13 +38,13 @@ func nextByte(s string, ch byte, ix int) (pos int, ok bool) {
 			} else if c == '"' {
 				quotes = true
 			} else if c == '[' {
-        squarn++
+				squarn++
 			} else if c == ']' {
-        squarn--
+				squarn--
 			} else if c == '{' {
-        bracketn++
+				bracketn++
 			} else if c == '}' {
-        bracketn--
+				bracketn--
 			}
 		}
 		pos++

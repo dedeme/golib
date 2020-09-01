@@ -153,20 +153,20 @@ func (js T) Ra() (v []T) {
 	var e string
 	for {
 		if i2, ok := nextByte(s2, ',', i); ok {
-      e = strings.TrimSpace(s2[i:i2])
-      if e == "" {
-        panic(fmt.Sprintf("Missing elements in\n'%v'", s))
-      }
-      v = append(v, T(e))
-      i = i2 + 1
-      continue
-    }
-    e = strings.TrimSpace(s2[i:l])
-    if e == "" {
-      panic(fmt.Sprintf("Missing elements in\n'%v'", s))
-    }
-    v = append(v, T(e))
-    break
+			e = strings.TrimSpace(s2[i:i2])
+			if e == "" {
+				panic(fmt.Sprintf("Missing elements in\n'%v'", s))
+			}
+			v = append(v, T(e))
+			i = i2 + 1
+			continue
+		}
+		e = strings.TrimSpace(s2[i:l])
+		if e == "" {
+			panic(fmt.Sprintf("Missing elements in\n'%v'", s))
+		}
+		v = append(v, T(e))
+		break
 	}
 	return
 }
@@ -202,16 +202,16 @@ func (js T) Ro() (v map[string]T) {
 	}
 	s2 := strings.TrimSpace(s[1 : len(s)-1])
 	l := len(s2)
-  if l == 0 {
-    return
-  }
+	if l == 0 {
+		return
+	}
 	i := 0
 	var kjs string
 	var k string
 	var val string
 	for {
 		i2, ok := nextByte(s2, ':', i)
-    if !ok {
+		if !ok {
 			panic(fmt.Sprintf("Expected ':' in\n'%v'", s2))
 		}
 		kjs = strings.TrimSpace(s2[i:i2])
@@ -223,20 +223,20 @@ func (js T) Ro() (v map[string]T) {
 		i = i2 + 1
 
 		if i2, ok := nextByte(s2, ',', i); ok {
-      val = strings.TrimSpace(s2[i:i2])
-      if val == "" {
-        panic(fmt.Sprintf("Value missing in\n'%v'", s))
-      }
-      v[k] = T(val)
-      i = i2 + 1
-      continue
-    }
-    val = strings.TrimSpace(s2[i:l])
-    if val == "" {
-      panic(fmt.Sprintf("Value missing in\n'%v'", s))
-    }
-    v[k] = T(val)
-    break
+			val = strings.TrimSpace(s2[i:i2])
+			if val == "" {
+				panic(fmt.Sprintf("Value missing in\n'%v'", s))
+			}
+			v[k] = T(val)
+			i = i2 + 1
+			continue
+		}
+		val = strings.TrimSpace(s2[i:l])
+		if val == "" {
+			panic(fmt.Sprintf("Value missing in\n'%v'", s))
+		}
+		v[k] = T(val)
+		break
 	}
 	return
 }

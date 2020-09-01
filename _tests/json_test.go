@@ -250,11 +250,11 @@ func TestObject(t *testing.T) {
 		},
 	)
 
-  //json.FromString("{\"o\":4").Ro()
-  //---> Error "Object does not end with '}' in\n{\"o\":4"
+	//json.FromString("{\"o\":4").Ro()
+	//---> Error "Object does not end with '}' in\n{\"o\":4"
 
-	//json.FromString("\"o\":4}").Ro()
-  //---> Error "Object does not start with '{' in\n\"o\":4}"
+	//son.FromString("\"o\":4}").Ro()
+	//---> Error "Object does not start with '{' in\n\"o\":4}"
 
 	//json.FromString("{\"a\":1,\"b\":2,}").Ro()
 	//---> Error "Expected ':' in\n{\"a\":1,\"b\":2,}"
@@ -262,22 +262,22 @@ func TestObject(t *testing.T) {
 	//json.FromString("{\"a\":1,\"b\":2,\"c\":}").Ro()
 	//---> Error "Value missing in\n{\"a\":1,\"b\":2,\"c\":}"
 
-		jss := json.FromString("{\"a\":345}").Ro()
-		jss["a"].Ri() // Ok
+	jss := json.FromString("{\"a\":345}").Ro()
+	jss["a"].Ri() // Ok
 
-		//jss = json.FromString("{\"a\":a345}").Ro()
-		//jss["a"].Ri()
-    //---> Error invalid character 'a' looking for beginning of value in
+	//jss = json.FromString("{\"a\":a345}").Ro()
+	//jss["a"].Ri()
+	//---> Error invalid character 'a' looking for beginning of value in
 
-		jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
-		jss["b"].Rs() // Ok
+	jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
+	jss["b"].Rs() // Ok
 
-		//jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc,\"c\":2}").Ro()
-		//jss["b"].Rs()
-    //---> Error invalid character 'c' after top-level value in
+	//jss = json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc,\"c\":2}").Ro()
+	//jss["b"].Rs()
+	//---> Error invalid character 'c' after top-level value in
 
-		json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
-		jss["c"].Rb()
-    //---> Error json: cannot unmarshal number into Go value of type bool in
+	json.FromString("{\"a\":1,\"b\":\"a\\\"b\\\"ñc\",\"c\":2}").Ro()
+	//jss["c"].Rb()
+	//---> Error json: cannot unmarshal number into Go value of type bool in
 
 }

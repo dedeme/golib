@@ -179,12 +179,12 @@ func (d T) Add(days int) T {
 	return T(time.Time(d).Add(time.Hour * 24 * time.Duration(days)))
 }
 
-func (d T) AddSeconds(days int) T {
-	return T(time.Time(d).Add(time.Second * time.Duration(days)))
+func (d T) AddSeconds(seconds int) T {
+	return T(time.Time(d).Add(time.Second * time.Duration(seconds)))
 }
 
-func (d T) AddMilliseconds(days int) T {
-	return T(time.Time(d).Add(time.Millisecond * time.Duration(days)))
+func (d T) AddMilliseconds(millis int) T {
+	return T(time.Time(d).Add(time.Millisecond * time.Duration(millis)))
 }
 
 // Milliseconds difference. d - other.
