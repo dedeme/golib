@@ -15,7 +15,7 @@ func Now() T {
 	return T(time.Now())
 }
 
-// 'day' is between 1 and 31 both inclusive. It it is out of range, date rolls
+// 'day' is between 1 and 31 both inclusive. If it is out of range, date rolls
 // to the corresponding valid date.
 // 'month' is between 1 and 12 both inclusive. If month is out of range, a
 // 'panic' is raised.
@@ -23,7 +23,7 @@ func New(day, month, year int) T {
 	return NewTime(day, month, year, 12, 0, 0)
 }
 
-// 'day' is between 1 and 31 both inclusive. It it is out of range, date rolls
+// 'day' is between 1 and 31 both inclusive. If it is out of range, date rolls
 // to the corresponding valid date.
 // 'month' is between 1 and 12 both inclusive. If month is out of range, a
 // 'panic' is raised.
@@ -142,13 +142,14 @@ func (d T) Eq(other T) bool {
 
 // Compare up to milliseconds.
 func (d T) EqTime(other T) bool {
-	return d.Day() == other.Day() &&
+  return d.DfTime(other) == 0
+/*	return d.Day() == other.Day() &&
 		d.Month() == other.Month() &&
 		d.Year() == other.Year() &&
 		d.Hour() == other.Hour() &&
 		d.Minute() == other.Minute() &&
 		d.Second() == other.Second() &&
-		d.Millisecond() == other.Millisecond()
+		d.Millisecond() == other.Millisecond()*/
 }
 
 // Compare up to day
@@ -176,32 +177,7 @@ func (d T) Compare(other T) int {
 
 // Compare up to milliseconds.
 func (d T) CompareTime(other T) int {
-	cmp := d.Compare(other)
-	if cmp == 0 {
-		if d.Hour() > other.Hour() {
-			return 1
-		}
-		if d.Hour() < other.Hour() {
-			return -1
-		}
-		if d.Minute() > other.Minute() {
-			return 1
-		}
-		if d.Minute() < other.Minute() {
-			return -1
-		}
-		if d.Second() > other.Second() {
-			return 1
-		}
-		if d.Second() < other.Second() {
-			return -1
-		}
-		if d.Millisecond() < other.Millisecond() {
-			return -1
-		}
-		return 0
-	}
-	return cmp
+  return d.DfTime(other)
 }
 
 // Interface to sort dates (Compare up to day). Example:
