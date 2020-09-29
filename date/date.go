@@ -5,70 +5,9 @@
 package date
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
-
-func toMonth(m int) time.Month {
-	switch m {
-	case 1:
-		return time.January
-	case 2:
-		return time.February
-	case 3:
-		return time.March
-	case 4:
-		return time.April
-	case 5:
-		return time.May
-	case 6:
-		return time.June
-	case 7:
-		return time.July
-	case 8:
-		return time.August
-	case 9:
-		return time.September
-	case 10:
-		return time.October
-	case 11:
-		return time.November
-	case 12:
-		return time.December
-	default:
-		panic(fmt.Sprintf("%v is not a valid month", m))
-	}
-}
-
-func fromMonth(m time.Month) int {
-	switch m {
-	case time.January:
-		return 1
-	case time.February:
-		return 2
-	case time.March:
-		return 3
-	case time.April:
-		return 4
-	case time.May:
-		return 5
-	case time.June:
-		return 6
-	case time.July:
-		return 7
-	case time.August:
-		return 8
-	case time.September:
-		return 9
-	case time.October:
-		return 10
-	case time.November:
-		return 11
-	default:
-		return 12
-	}
-}
 
 type T time.Time
 
@@ -76,7 +15,7 @@ func Now() T {
 	return T(time.Now())
 }
 
-// 'day' is between 1 and 12 both inclusive. It it is out of range, date rolls
+// 'day' is between 1 and 31 both inclusive. It it is out of range, date rolls
 // to the corresponding valid date.
 // 'month' is between 1 and 12 both inclusive. If month is out of range, a
 // 'panic' is raised.
@@ -84,7 +23,7 @@ func New(day, month, year int) T {
 	return NewTime(day, month, year, 12, 0, 0)
 }
 
-// 'day' is between 1 and 12 both inclusive. It it is out of range, date rolls
+// 'day' is between 1 and 31 both inclusive. It it is out of range, date rolls
 // to the corresponding valid date.
 // 'month' is between 1 and 12 both inclusive. If month is out of range, a
 // 'panic' is raised.
@@ -93,7 +32,7 @@ func NewTime(day, month, year, hour, min, sec int) T {
 	if err != nil {
 		panic(err)
 	}
-	return T(time.Date(year, toMonth(month), day, hour, min, sec, 0, lc))
+	return T(time.Date(year, time.Month(month), day, hour, min, sec, 0, lc))
 }
 
 // 's' is in format "yyyymmdd"
@@ -132,27 +71,12 @@ func (d T) Day() int {
 
 // Returns the week day. 0 -> Sunday ... 6 -> Saturday
 func (d T) Weekday() int {
-	switch time.Time(d).Weekday() {
-	case time.Sunday:
-		return 0
-	case time.Monday:
-		return 1
-	case time.Tuesday:
-		return 2
-	case time.Wednesday:
-		return 3
-	case time.Thursday:
-		return 4
-	case time.Friday:
-		return 5
-	default:
-		return 6
-	}
+  return int(time.Time(d).Weekday())
 }
 
 // In the range [1-12]
 func (d T) Month() int {
-	return fromMonth(time.Time(d).Month())
+	return int(time.Time(d).Month())
 }
 
 func (d T) Year() int {
