@@ -49,7 +49,7 @@ func Key(key string, lg int) string {
 		v2 := v1 + int(k[v1%lenk])
 		v3 := v2 + int(k[v2%lenk])
 		v4 := v3 + int(k[v3%lenk])
-		sum = (sum + i + v4) % 256
+		sum = (sum + i + v4) & 255
 		r1[i] = byte(sum)
 		r2[i] = byte(sum)
 		ik++
@@ -63,9 +63,9 @@ func Key(key string, lg int) string {
 		v2 := v1 + int(r2[v1%lg2])
 		v3 := v2 + int(r2[v2%lg2])
 		v4 := v3 + int(r2[v3%lg2])
-		sum = (sum + v4) % 256
+		sum = (sum + v4) & 255
 		r2[i] = byte(sum)
-		r[i] = byte((sum + int(r1[i])) % 256)
+		r[i] = byte((sum + int(r1[i])) & 255)
 	}
 
 	return b64.EncodeToString(r)[:lg]
