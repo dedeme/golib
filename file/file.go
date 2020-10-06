@@ -45,6 +45,14 @@ func LastModification(path string) int64 {
 	return info.ModTime().Unix()
 }
 
+func Size(path string) int64 {
+	info, err := os.Stat(path)
+	if err != nil {
+		panic(err)
+	}
+	return info.Size()
+}
+
 // Mkdir makes a directory
 func Mkdir(f string) {
 	os.Mkdir(f, os.FileMode(0755))
