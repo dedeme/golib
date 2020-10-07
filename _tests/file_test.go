@@ -11,19 +11,40 @@ import (
 	"testing"
 )
 
-func TestCgiio(t *testing.T) {
+func TestFile(t *testing.T) {
 	u, _ := user.Current()
-	dir := filepath.Join(u.HomeDir, ".dmGoApli", "dmGoLib")
+	dir := filepath.Join(u.HomeDir, ".dmGoApp", "dmGoLib")
 	tmp := filepath.Join(dir, "tmp.txt")
 	tmp1 := filepath.Join(dir, "tmp1.txt")
 	tmp2 := filepath.Join(dir, "tmp2.txt")
+  cpdir := filepath.Join(dir, "cpdir")
+  cptmp := filepath.Join(cpdir, "tmp.txt")
+  cptmpx := filepath.Join(cpdir, "tmpx.txt")
+  cpdir2 := filepath.Join(dir, "cpdir2")
+  cptmp2 := filepath.Join(cpdir2, "cpdir", "tmp.txt")
+  cptmpx2 := filepath.Join(cpdir2, "cpdir", "tmpx.txt")
 
 	file.Mkdirs(dir)
+
 	ftmp := file.OpenWrite(tmp)
 	file.Write(ftmp, "Una\n")
 	file.Write(ftmp, "\n")
 	file.Write(ftmp, "Dos...\ny Tres")
 	ftmp.Close()
+
+  file.Mkdir(cpdir)
+  file.Copy(tmp, cpdir)
+  file.Copy(tmp, cptmpx)
+  if file.ReadAll(cptmp) != file.ReadAll(cptmpx) {
+    t.Fatal("Fail copying file")
+  }
+  file.Mkdir(cpdir2)
+  file.Copy(cpdir, cpdir2)
+  if file.ReadAll(cptmp2) != file.ReadAll(cptmpx2) {
+    t.Fatal("Fail copying directory")
+  }
+  file.Remove(cpdir)
+  file.Remove(cpdir2)
 
 	ftmp = file.OpenAppend(tmp)
 	file.WriteBin(ftmp, []byte("\nY un añadido"))

@@ -13,6 +13,8 @@ import (
 	"os/user"
 	"path/filepath"
 	"strings"
+  "fmt"
+  "path"
 )
 
 // UserDir returns the name of user dir
@@ -190,6 +192,84 @@ func WriteBin(file *os.File, data []byte) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+//  Copy a file.
+//    source: Can be a regular file or a directory.
+//    target: - If source is a directory, target must be the target parent
+//              directory.
+//            - If source is a regular file, target can be the target parent
+//              directory or a regular file.
+//  NOTE: Target will be overwritte if already exists.
+func Copy(source, target string) (err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			switch e.(type) {
+			case error:
+				err = e.(error)
+			default:
+				err = fmt.Errorf("Fail copying '%v' to '%v'", source, target)
+			}
+		}
+	}()
+
+	if IsDirectory(source) {
+    p := path.Join(target, path.Base(source))
+    if Exists(p) {
+      if !IsDirectory(p) {
+        err = fmt.Errorf(
+          "Copying '%v' to '%v', when the later exists and is not a directory",
+          source, p,
+        )
+        return
+      }
+      Remove(p)
+    }
+    Mkdirs(p)
+
+    for _, e := range List(source) {
+      if err = Copy(path.Join(source, e.Name()), p); err != nil {
+        return
+      }
+    }
+    return
+	}
+
+  if IsDirectory(target) {
+    target = path.Join(target, path.Base(source))
+  }
+
+	sourcef, err := os.Open(source)
+	if err != nil {
+		return
+	}
+
+	targetf, err := os.Create(target)
+	if err != nil {
+    return
+  }
+
+	defer sourcef.Close()
+	defer targetf.Close()
+
+	buf := make([]byte, 8192)
+	for {
+    var n int
+		n, err = sourcef.Read(buf)
+		if err != nil && err != io.EOF {
+			return
+		}
+		if n == 0 {
+      err = nil
+			break
+		}
+
+		if _, err = targetf.Write(buf[:n]); err != nil {
+      return
+		}
+	}
+
+  return
 }
 
 // Zip a file or directory
