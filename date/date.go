@@ -71,7 +71,7 @@ func (d T) Day() int {
 
 // Returns the week day. 0 -> Sunday ... 6 -> Saturday
 func (d T) Weekday() int {
-  return int(time.Time(d).Weekday())
+	return int(time.Time(d).Weekday())
 }
 
 // In the range [1-12]
@@ -142,8 +142,8 @@ func (d T) Eq(other T) bool {
 
 // Compare up to milliseconds.
 func (d T) EqTime(other T) bool {
-  return d.DfTime(other) == 0
-/*	return d.Day() == other.Day() &&
+	return d.DfTime(other) == 0
+	/*	return d.Day() == other.Day() &&
 		d.Month() == other.Month() &&
 		d.Year() == other.Year() &&
 		d.Hour() == other.Hour() &&
@@ -177,7 +177,7 @@ func (d T) Compare(other T) int {
 
 // Compare up to milliseconds.
 func (d T) CompareTime(other T) int {
-  return d.DfTime(other)
+	return d.DfTime(other)
 }
 
 // Interface to sort dates (Compare up to day). Example:

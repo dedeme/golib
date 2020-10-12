@@ -17,12 +17,12 @@ func TestFile(t *testing.T) {
 	tmp := filepath.Join(dir, "tmp.txt")
 	tmp1 := filepath.Join(dir, "tmp1.txt")
 	tmp2 := filepath.Join(dir, "tmp2.txt")
-  cpdir := filepath.Join(dir, "cpdir")
-  cptmp := filepath.Join(cpdir, "tmp.txt")
-  cptmpx := filepath.Join(cpdir, "tmpx.txt")
-  cpdir2 := filepath.Join(dir, "cpdir2")
-  cptmp2 := filepath.Join(cpdir2, "cpdir", "tmp.txt")
-  cptmpx2 := filepath.Join(cpdir2, "cpdir", "tmpx.txt")
+	cpdir := filepath.Join(dir, "cpdir")
+	cptmp := filepath.Join(cpdir, "tmp.txt")
+	cptmpx := filepath.Join(cpdir, "tmpx.txt")
+	cpdir2 := filepath.Join(dir, "cpdir2")
+	cptmp2 := filepath.Join(cpdir2, "cpdir", "tmp.txt")
+	cptmpx2 := filepath.Join(cpdir2, "cpdir", "tmpx.txt")
 
 	file.Mkdirs(dir)
 
@@ -32,19 +32,19 @@ func TestFile(t *testing.T) {
 	file.Write(ftmp, "Dos...\ny Tres")
 	ftmp.Close()
 
-  file.Mkdir(cpdir)
-  file.Copy(tmp, cpdir)
-  file.Copy(tmp, cptmpx)
-  if file.ReadAll(cptmp) != file.ReadAll(cptmpx) {
-    t.Fatal("Fail copying file")
-  }
-  file.Mkdir(cpdir2)
-  file.Copy(cpdir, cpdir2)
-  if file.ReadAll(cptmp2) != file.ReadAll(cptmpx2) {
-    t.Fatal("Fail copying directory")
-  }
-  file.Remove(cpdir)
-  file.Remove(cpdir2)
+	file.Mkdir(cpdir)
+	file.Copy(tmp, cpdir)
+	file.Copy(tmp, cptmpx)
+	if file.ReadAll(cptmp) != file.ReadAll(cptmpx) {
+		t.Fatal("Fail copying file")
+	}
+	file.Mkdir(cpdir2)
+	file.Copy(cpdir, cpdir2)
+	if file.ReadAll(cptmp2) != file.ReadAll(cptmpx2) {
+		t.Fatal("Fail copying directory")
+	}
+	file.Remove(cpdir)
+	file.Remove(cpdir2)
 
 	ftmp = file.OpenAppend(tmp)
 	file.WriteBin(ftmp, []byte("\nY un añadido"))

@@ -7,14 +7,14 @@ package file
 import (
 	"archive/zip"
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"os/user"
+	"path"
 	"path/filepath"
 	"strings"
-  "fmt"
-  "path"
 )
 
 // UserDir returns the name of user dir
@@ -214,30 +214,30 @@ func Copy(source, target string) (err error) {
 	}()
 
 	if IsDirectory(source) {
-    p := path.Join(target, path.Base(source))
-    if Exists(p) {
-      if !IsDirectory(p) {
-        err = fmt.Errorf(
-          "Copying '%v' to '%v', when the later exists and is not a directory",
-          source, p,
-        )
-        return
-      }
-      Remove(p)
-    }
-    Mkdirs(p)
+		p := path.Join(target, path.Base(source))
+		if Exists(p) {
+			if !IsDirectory(p) {
+				err = fmt.Errorf(
+					"Copying '%v' to '%v', when the later exists and is not a directory",
+					source, p,
+				)
+				return
+			}
+			Remove(p)
+		}
+		Mkdirs(p)
 
-    for _, e := range List(source) {
-      if err = Copy(path.Join(source, e.Name()), p); err != nil {
-        return
-      }
-    }
-    return
+		for _, e := range List(source) {
+			if err = Copy(path.Join(source, e.Name()), p); err != nil {
+				return
+			}
+		}
+		return
 	}
 
-  if IsDirectory(target) {
-    target = path.Join(target, path.Base(source))
-  }
+	if IsDirectory(target) {
+		target = path.Join(target, path.Base(source))
+	}
 
 	sourcef, err := os.Open(source)
 	if err != nil {
@@ -246,30 +246,30 @@ func Copy(source, target string) (err error) {
 
 	targetf, err := os.Create(target)
 	if err != nil {
-    return
-  }
+		return
+	}
 
 	defer sourcef.Close()
 	defer targetf.Close()
 
 	buf := make([]byte, 8192)
 	for {
-    var n int
+		var n int
 		n, err = sourcef.Read(buf)
 		if err != nil && err != io.EOF {
 			return
 		}
 		if n == 0 {
-      err = nil
+			err = nil
 			break
 		}
 
 		if _, err = targetf.Write(buf[:n]); err != nil {
-      return
+			return
 		}
 	}
 
-  return
+	return
 }
 
 // Zip a file or directory
