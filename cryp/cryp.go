@@ -27,11 +27,8 @@ func GenK(lg int) string {
 //   lg    : Length of result
 //   return: 'lg' B64 digits
 func Key(key string, lg int) string {
-	k, err := b64.DecodeString(b64.EncodeToString([]byte(
-		key + "codified in irreversibleDeme is good, very good!\n\r8@@")))
-	if err != nil {
-		log.Fatal(err)
-	}
+	k := []byte(
+		key + "codified in irreversibleDeme is good, very good!\n\r8@@")
 
 	lenk := len(k)
 	sum := 0
