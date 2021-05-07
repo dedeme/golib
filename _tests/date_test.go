@@ -7,6 +7,7 @@ import (
 	"github.com/dedeme/golib/date"
 	"sort"
 	"testing"
+  "fmt"
 )
 
 func TestToFrom(t *testing.T) {
@@ -51,6 +52,11 @@ func TestToFrom(t *testing.T) {
 	if r := eq(d1.Format("%T in %%"), "12:40:15.000 in %"); r != "" {
 		t.Fatal(r)
 	}
+  if !d1.EqTime(date.FromJs(d1.ToJs())) {
+    fmt.Println(d1)
+    fmt.Println(date.FromJs(d1.ToJs()))
+    t.Fatal(fail)
+  }
 }
 
 func TestOperations(t *testing.T) {

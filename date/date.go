@@ -5,6 +5,7 @@
 package date
 
 import (
+  "github.com/dedeme/golib/json"
 	"strings"
 	"time"
 )
@@ -63,6 +64,10 @@ func FromEn(s, sep string) T {
 		panic(err)
 	}
 	return T(d)
+}
+
+func FromJs(js json.T) T {
+  return T(time.Unix(js.Rl(), 0))
 }
 
 func (d T) Day() int {
@@ -245,4 +250,9 @@ func (d T) ToIso() string {
 // Returns a string in format 'mm/dd/yyyy'.
 func (d T) ToEn() string {
 	return d.Format("%M/%D/%Y")
+}
+
+// JSON serialization
+func (d T) ToJs() json.T {
+  return json.Wl(time.Time(d).Unix())
 }
